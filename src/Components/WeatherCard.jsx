@@ -6,8 +6,64 @@ import CloudIcon from "@mui/icons-material/Cloud";
 import Button from "@mui/material/Button";
 // Material UI
 
-export default function WeatherCard() {
+// External Libraries
+import axios from "axios";
+//External Libraries
+
+//React
+import { useEffect, useState } from "react";
+//React
+
+//Components
+// import GetTemp from "./GetTemp";
+import useGeoLocation from "../useGeoLocation";
+//Components
+
+export default function WeatherCard({ lat, lng }) {
   const theme = useTheme();
+
+  const [requestInfo, setRequestInfo] = useState({
+    CurrentTempreture: 0,
+    cityName: "",
+    MaxTempreture: 0,
+    MinTempreture: 0,
+  });
+
+  useEffect(() => {
+    console.log("Request Use effect");
+    axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=939d16d309cf6102cc433f7258f8ab18&units=metric`
+      )
+      .then(function (response) {
+        // handle success
+        console.log(response);
+        // console.log(response.data.name);
+
+        const responseTemp = Math.round(response.data.main.temp);
+        const responseCityName = response.data.name;
+        const responseMaxTemp = Math.round(response.data.main.temp_max);
+        const responseMinTemp = Math.round(response.data.main.temp_min);
+
+        // const responseInfo = {
+        //   CurrentTempreture: responseTemp,
+        //   cityName: responseCityName,
+        //   MaxTempreture: responseMaxTemp,
+        //   MinTempreture: responseMinTemp,
+        // };
+        setRequestInfo({
+          ...requestInfo,
+          CurrentTempreture: responseTemp,
+          cityName: responseCityName,
+          MaxTempreture: responseMaxTemp,
+          MinTempreture: responseMinTemp,
+        });
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  }, [lat, lng]);
 
   return (
     <Container maxWidth="sm">
@@ -82,7 +138,7 @@ export default function WeatherCard() {
                       fontWeight: "400",
                     }}
                   >
-                    38
+                    {/* {temp} */}
                   </Typography>
 
                   {/* Todo: Temperature Image from API */}
@@ -117,7 +173,12 @@ export default function WeatherCard() {
         {/* Language Button Container */}
         <div
           dir="rtl"
-          style={{ display: "flex", justifyContent: "end", width: "100%", marginTop: "20px" }}
+          style={{
+            display: "flex",
+            justifyContent: "end",
+            width: "100%",
+            marginTop: "20px",
+          }}
         >
           <Button
             style={{

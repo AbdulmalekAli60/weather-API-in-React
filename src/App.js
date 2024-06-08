@@ -1,14 +1,17 @@
 import "./App.css";
 // Material UI
-import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 // Material UI
 
 //Components
-// import useGeoLocation from "./useGeoLocation";
+import useGeoLocation from "./useGeoLocation";
 import WeatherCard from "./Components/WeatherCard";
+// import GetTemp from "./GetTemp";
 //Components
 
+//React
+import { useEffect } from "react";
+//React
 
 const theme = createTheme({
   fonts: {
@@ -18,29 +21,36 @@ const theme = createTheme({
     primary: {
       main: "#0000ff",
     },
-    text:{
+    text: {
       primary: "#fff",
-    }
+    },
   },
 });
 
 function App() {
-  // const location = useGeoLocation();
-  // if (!location.loaded) {
-  //   return <div>Loading...</div>;
-  // }
+  const location = useGeoLocation();
+  useEffect(() => {
+    if (location.loaded && location.coordinates) {
+      const { lat, lng } = location.coordinates;
+      console.log(lat, lng);
+    }
+  }, []);
 
-  // if (location.error) {
-  //   return <div>Error: {location.error.message}</div>;
-  // }
-  // console.log(location.coordinates);
+  if (!location.loaded) {
+    return <div>Loading...</div>;
+  }
+
+  if (location.error) {
+    return <div>Error: {location.error.message}</div>;
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <div className="App">
-       
-        <WeatherCard/>
-        
+        <WeatherCard
+          lat={location.coordinates.lat}
+          lng={location.coordinates.lng}
+        />
       </div>
     </ThemeProvider>
   );
