@@ -7,63 +7,35 @@ import Button from "@mui/material/Button";
 // Material UI
 
 // External Libraries
-import axios from "axios";
+import moment from "moment";
+import "moment/locale/ar-sa";
 //External Libraries
 
 //React
-import { useEffect, useState } from "react";
+
 //React
 
 //Components
-// import GetTemp from "./GetTemp";
-import useGeoLocation from "../useGeoLocation";
+import useWeatherData from "./useWeatherData";
+import getTimeAndDate from "./getTimeAndDate";
 //Components
 
-export default function WeatherCard({ lat, lng }) {
+export default function WeatherCard() {
+  const {
+    maxTemperature,
+    minTemperature,
+    currentTemperature,
+    cityName,
+    descreption,
+    Icon,
+  } = useWeatherData();
+
   const theme = useTheme();
 
-  const [requestInfo, setRequestInfo] = useState({
-    CurrentTempreture: 0,
-    cityName: "",
-    MaxTempreture: 0,
-    MinTempreture: 0,
-  });
+  // const dateAndTime = moment().format('MMMM Do YYYY, h:mm a');
 
-  useEffect(() => {
-    console.log("Request Use effect");
-    axios
-      .get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=939d16d309cf6102cc433f7258f8ab18&units=metric`
-      )
-      .then(function (response) {
-        // handle success
-        console.log(response);
-        // console.log(response.data.name);
-
-        const responseTemp = Math.round(response.data.main.temp);
-        const responseCityName = response.data.name;
-        const responseMaxTemp = Math.round(response.data.main.temp_max);
-        const responseMinTemp = Math.round(response.data.main.temp_min);
-
-        // const responseInfo = {
-        //   CurrentTempreture: responseTemp,
-        //   cityName: responseCityName,
-        //   MaxTempreture: responseMaxTemp,
-        //   MinTempreture: responseMinTemp,
-        // };
-        setRequestInfo({
-          ...requestInfo,
-          CurrentTempreture: responseTemp,
-          cityName: responseCityName,
-          MaxTempreture: responseMaxTemp,
-          MinTempreture: responseMinTemp,
-        });
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
-  }, [lat, lng]);
+  const dateAndTime = getTimeAndDate();
+  console.log(dateAndTime);
 
   return (
     <Container maxWidth="sm">
@@ -108,7 +80,7 @@ export default function WeatherCard({ lat, lng }) {
                   fontWeight: "600",
                 }}
               >
-                الرياض
+                {cityName}
               </Typography>
 
               <Typography
@@ -117,9 +89,10 @@ export default function WeatherCard({ lat, lng }) {
                   marginRight: "20px",
                   fontFamily: "IBMPlexSansArabic",
                   fontWeight: "500",
+                  fontSize: "1.5rem",
                 }}
               >
-                الإثنين 10-10-2024
+                {dateAndTime}
               </Typography>
             </div>
             {/*=== City and time=== */}
@@ -130,20 +103,29 @@ export default function WeatherCard({ lat, lng }) {
               <div>
                 {/* Temperature */}
                 <div>
-                  <Typography
-                    variant="h1"
+                  <div
                     style={{
-                      textAlign: "right",
-                      fontFamily: "IBMPlexSansArabic",
-                      fontWeight: "400",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
-                    {/* {temp} */}
-                  </Typography>
+                    <Typography
+                      variant="h1"
+                      style={{
+                        textAlign: "right",
+                        fontFamily: "IBMPlexSansArabic",
+                        fontWeight: "400",
+                      }}
+                    >
+                      {currentTemperature}
+                    </Typography>
 
-                  {/* Todo: Temperature Image from API */}
+                    {/* Todo: Temperature Image from API */}
+                    <img src={Icon} alt="" />
+                  </div>
                   {/* ===Todo: Temperature Image from API ===*/}
-                  <Typography variant="h6">Broken Clouds</Typography>
+                  <Typography variant="h6">{descreption}</Typography>
 
                   {/* Min and Max Tempeture */}
                   <div
@@ -153,9 +135,9 @@ export default function WeatherCard({ lat, lng }) {
                       alignItems: "center",
                     }}
                   >
-                    <h5>الصغرى 16</h5>
+                    <h5>الصغرى: {minTemperature}</h5>
                     <h5 style={{ margin: "0px 5px" }}>|</h5>
-                    <h5>الكبرى 16</h5>
+                    <h5>الكبرى: {maxTemperature}</h5>
                   </div>
                   {/*=== Min and Max Temreture=== */}
                 </div>
