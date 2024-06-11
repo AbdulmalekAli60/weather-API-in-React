@@ -8,10 +8,6 @@ import WeatherCard from "./Components/WeatherCard";
 import { CoordinatesProvider } from "./Contexts/CoordinatesContext";
 //Components
 
-//React
-
-//React
-
 const theme = createTheme({
   fonts: {
     fontFamily: "IBMPlexSansArabic",

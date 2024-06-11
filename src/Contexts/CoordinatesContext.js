@@ -4,11 +4,13 @@ import { createContext, useContext, useEffect } from "react";
 
 //Components
 import useGeoLocation from "../useGeoLocation";
+import Loader from "../Components/Loader.jsx";
+import AskForPremissionModal from "../Components/AskForPremissionModal.jsx";
 //Components
 
-export const CoordinatesContext = createContext({
-    lat: "",
-    lng: "",
+const CoordinatesContext = createContext({
+  lat: "",
+  lng: "",
 });
 
 export const CoordinatesProvider = ({ children }) => {
@@ -22,21 +24,26 @@ export const CoordinatesProvider = ({ children }) => {
   }, []);
 
   if (!location.loaded) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (location.error) {
-    return <div>Error: {location.error.message}</div>;
+    return (
+      <div>
+        <AskForPremissionModal message={location.error.message} />
+      </div>
+    );
   }
 
   return (
-    <CoordinatesContext.Provider value={{lat: location.coordinates.lat, lng: location.coordinates.lng}}>
+    <CoordinatesContext.Provider
+      value={{ lat: location.coordinates.lat, lng: location.coordinates.lng }}
+    >
       {children}
     </CoordinatesContext.Provider>
   );
 };
 
 export const useCoordinates = () => {
-    return useContext(CoordinatesContext);
-}
-
+  return useContext(CoordinatesContext);
+};

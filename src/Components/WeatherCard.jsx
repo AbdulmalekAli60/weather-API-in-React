@@ -9,10 +9,12 @@ import Button from "@mui/material/Button";
 // External Libraries
 import moment from "moment";
 import "moment/locale/ar-sa";
+import { useTranslation } from "react-i18next";
+import citiesData from "../JSON/English&ArabicCityNames.json";
 //External Libraries
 
 //React
-
+import { useEffect, useState } from "react";
 //React
 
 //Components
@@ -21,6 +23,8 @@ import getTimeAndDate from "./getTimeAndDate";
 //Components
 
 export default function WeatherCard() {
+  // === Custom Hocks ===
+  const { t, i18n } = useTranslation();
   const {
     maxTemperature,
     minTemperature,
@@ -29,14 +33,63 @@ export default function WeatherCard() {
     descreption,
     Icon,
   } = useWeatherData();
-
   const theme = useTheme();
+  // === Custom Hocks ===
 
-  // const dateAndTime = moment().format('MMMM Do YYYY, h:mm a');
+  //=== States ===
+  const [locale, setLocale] = useState("ar");
+  const [city, setCity] = useState("");
+  const [dateAndTime, setDateAndTime] = useState("");
+  //=== States ===
 
-  const dateAndTime = getTimeAndDate();
-  console.log(dateAndTime);
+  useEffect(() => {
+    if(locale === "en") {
+      setCity(cityName);
+    }else{
+      const arabicCity = findArabicCityName();
+      setCity(arabicCity);
+    }
+  },[locale]);
 
+
+  useEffect(() => {
+    i18n.changeLanguage("ar-sa");
+    moment.locale("ar-sa"); // Initialize moment with Arabic (Saudi Arabia) locale
+    const initialDateAndTime = getTimeAndDate("ar-sa");
+    setDateAndTime(initialDateAndTime);
+  
+    if (cityName) {
+      setCity(findArabicCityName());
+    }
+  }, [cityName]);
+  
+  function handleLanguageClick() {
+    if (locale === "en") {
+      setLocale("ar");
+      i18n.changeLanguage("ar");
+  
+      const newDateAndTime = getTimeAndDate("ar-sa");
+      setDateAndTime(newDateAndTime);
+    } else {
+      setLocale("en");
+      i18n.changeLanguage("en");
+      setCity(cityName);
+      const newDateAndTime = getTimeAndDate("en");
+      setDateAndTime(newDateAndTime);
+    } 
+  }
+
+  const direction = locale === "ar" ? "rtl" : "ltr";
+  //======Event Handelers======
+  
+  function findArabicCityName() {
+    for (const city of citiesData) {
+      if (city.name_en === cityName) {
+        return city.name_ar;
+      }
+    }
+    return "City not found";
+  }
   return (
     <Container maxWidth="sm">
       {/* Content Container */}
@@ -51,7 +104,7 @@ export default function WeatherCard() {
       >
         {/* Card */}
         <div
-          dir="rtl"
+          dir={direction}
           style={{
             background: "rgb(28 52 91 / 36%)",
             color: theme.palette.text.primary,
@@ -70,17 +123,18 @@ export default function WeatherCard() {
                 alignItems: "end",
                 justifyContent: "start",
               }}
-              dir="rtl"
+              dir={direction}
             >
               <Typography
                 variant="h2"
                 style={{
                   marginRight: "20px",
                   fontFamily: "IBMPlexSansArabic",
-                  fontWeight: "600",
+                  fontWeight: "500",
+                  fontSize: "2.3rem",
                 }}
               >
-                {cityName}
+                {city}
               </Typography>
 
               <Typography
@@ -125,7 +179,7 @@ export default function WeatherCard() {
                     <img src={Icon} alt="" />
                   </div>
                   {/* ===Todo: Temperature Image from API ===*/}
-                  <Typography variant="h6">{descreption}</Typography>
+                  <Typography variant="h6">{t(descreption)}</Typography>
 
                   {/* Min and Max Tempeture */}
                   <div
@@ -135,9 +189,13 @@ export default function WeatherCard() {
                       alignItems: "center",
                     }}
                   >
-                    <h5>الصغرى: {minTemperature}</h5>
+                    <h5>
+                      {t("Min")}: {minTemperature}
+                    </h5>
                     <h5 style={{ margin: "0px 5px" }}>|</h5>
-                    <h5>الكبرى: {maxTemperature}</h5>
+                    <h5>
+                      {t("Max")}: {maxTemperature}
+                    </h5>
                   </div>
                   {/*=== Min and Max Temreture=== */}
                 </div>
@@ -154,7 +212,7 @@ export default function WeatherCard() {
 
         {/* Language Button Container */}
         <div
-          dir="rtl"
+          dir={direction}
           style={{
             display: "flex",
             justifyContent: "end",
@@ -169,8 +227,9 @@ export default function WeatherCard() {
               fontFamily: "IBMPlexSansArabic",
             }}
             variant="text"
+            onClick={handleLanguageClick}
           >
-            إنجليزي
+            {locale === "en" ? "Arabic" : "إنجليزي"}
           </Button>
         </div>
         {/*=== Language Button Container=== */}

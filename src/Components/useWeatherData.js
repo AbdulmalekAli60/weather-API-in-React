@@ -21,12 +21,12 @@ const useWeatherData = () => {
     descreption: "",
     Icon: "",
   });
-
+  const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
   let cancelAxios = null;
   useEffect(() => {
     axios
       .get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=939d16d309cf6102cc433f7258f8ab18&units=metric`,
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${API_KEY}&units=metric`,
         {
           cancelToken: new axios.CancelToken((c) => {
             //unmount in the middle of the request
@@ -37,7 +37,7 @@ const useWeatherData = () => {
       )
       .then(function (response) {
         // handle success
-        console.log(response);
+        // console.log(response);
 
         const responseTemp = Math.round(response.data.main.temp);
         const responseCityName = response.data.name;

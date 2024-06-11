@@ -1,0 +1,16 @@
+{
+  "hello": "مرحبا",
+  "Min": "الصغرى",
+  "Max": "الكبرى",
+  "clear sky": "سماء صافية",
+  "few clouds": "سحب قليلة",
+  "scattered clouds": "سحب موزعة",
+  "broken clouds": "سحب متفرقة",
+  "shower rain": "أمطار خفيفة",
+  "rain": "أمطار",
+  "thunderstorm": "عاصفة رعدية",
+  "snow": "ثلج",
+  "mist": "ضباب",
+  "overcast clouds":"سماء ملبدة"
+
+}
