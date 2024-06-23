@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // Material UI
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -11,15 +12,20 @@ import moment from "moment";
 import "moment/locale/ar-sa";
 import { useTranslation } from "react-i18next";
 import citiesData from "../JSON/English&ArabicCityNames.json";
+import { useSelector, useDispatch } from "react-redux";
+import { changeResult } from "../features/WeatherAPI/WeatherAPiSlice";
 //External Libraries
 
 //React
 import { useEffect, useState } from "react";
 //React
 
+import { fetchWeatherData } from "../features/WeatherAPI/WeatherAPiSlice";
+
 //Components
 import useWeatherData from "./useWeatherData";
 import getTimeAndDate from "./getTimeAndDate";
+import Loader from "./Loader";
 //Components
 
 export default function WeatherCard() {
@@ -36,6 +42,25 @@ export default function WeatherCard() {
   const theme = useTheme();
   // === Custom Hocks ===
 
+  // Redux
+  const result = useSelector((state) => {
+    console.log("The state is: ", state);
+    return 10;
+  });
+  const dispatch = useDispatch();
+
+  const isLoading = useSelector((state) => {
+    return state.isLoading;
+  });
+
+      //Trying Redux
+      console.log("dispathicnign from weathercard");
+      dispatch(fetchWeatherData());
+      dispatch(changeResult(10));
+  
+      //Trying Redux
+  // Redux
+
   //=== States ===
   const [locale, setLocale] = useState("ar");
   const [city, setCity] = useState("");
@@ -43,31 +68,31 @@ export default function WeatherCard() {
   //=== States ===
 
   useEffect(() => {
-    if(locale === "en") {
+
+    if (locale === "en") {
       setCity(cityName);
-    }else{
+    } else {
       const arabicCity = findArabicCityName();
       setCity(arabicCity);
     }
-  },[locale]);
-
+  }, [locale]);
 
   useEffect(() => {
     i18n.changeLanguage("ar-sa");
     moment.locale("ar-sa"); // Initialize moment with Arabic (Saudi Arabia) locale
     const initialDateAndTime = getTimeAndDate("ar-sa");
     setDateAndTime(initialDateAndTime);
-  
+
     if (cityName) {
       setCity(findArabicCityName());
     }
   }, [cityName]);
-  
+
   function handleLanguageClick() {
     if (locale === "en") {
       setLocale("ar");
       i18n.changeLanguage("ar");
-  
+
       const newDateAndTime = getTimeAndDate("ar-sa");
       setDateAndTime(newDateAndTime);
     } else {
@@ -76,12 +101,12 @@ export default function WeatherCard() {
       setCity(cityName);
       const newDateAndTime = getTimeAndDate("en");
       setDateAndTime(newDateAndTime);
-    } 
+    }
   }
 
   const direction = locale === "ar" ? "rtl" : "ltr";
   //======Event Handelers======
-  
+
   function findArabicCityName() {
     for (const city of citiesData) {
       if (city.name_en === cityName) {
@@ -153,7 +178,7 @@ export default function WeatherCard() {
             <hr />
             {/* Containder of degree + cloud icon */}
             <div style={{ display: "flex", justifyContent: "space-around" }}>
-              {/* Degree and descreption */}
+              {/* Degree and Temperature */}
               <div>
                 {/* Temperature */}
                 <div>
@@ -163,7 +188,8 @@ export default function WeatherCard() {
                       justifyContent: "center",
                       alignItems: "center",
                     }}
-                  >
+                  > 
+                  {isLoading ? <Loader/> : ""}
                     <Typography
                       variant="h1"
                       style={{

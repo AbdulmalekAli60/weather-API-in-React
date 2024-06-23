@@ -62,7 +62,7 @@ const useWeatherData = () => {
       });
 
     return () => {
-      console.log("cancel axios");
+      // console.log("cancel axios");
       cancelAxios();
     };
   }, []);
