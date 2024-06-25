@@ -13,7 +13,7 @@ import "moment/locale/ar-sa";
 import { useTranslation } from "react-i18next";
 import citiesData from "../JSON/English&ArabicCityNames.json";
 import { useSelector, useDispatch } from "react-redux";
-import { changeResult } from "../features/WeatherAPI/WeatherAPiSlice";
+// import { changeResult } from "../features/WeatherAPI/WeatherAPiSlice";
 //External Libraries
 
 //React
@@ -31,20 +31,12 @@ import Loader from "./Loader";
 export default function WeatherCard() {
   // === Custom Hocks ===
   const { t, i18n } = useTranslation();
-  const {
-    maxTemperature,
-    minTemperature,
-    currentTemperature,
-    cityName,
-    descreption,
-    Icon,
-  } = useWeatherData();
   const theme = useTheme();
   // === Custom Hocks ===
 
   // Redux
   const result = useSelector((state) => {
-    console.log("The state is: ", state);
+    // console.log("The state is: ", state);
     return 10;
   });
   const dispatch = useDispatch();
@@ -52,13 +44,11 @@ export default function WeatherCard() {
   const isLoading = useSelector((state) => {
     return state.isLoading;
   });
+  const weatherData = useSelector((state) => state.weather);
 
-      //Trying Redux
-      console.log("dispathicnign from weathercard");
-      dispatch(fetchWeatherData());
-      dispatch(changeResult(10));
-  
-      //Trying Redux
+  console.log("weahter object from card", weatherData);
+
+  //Redux
   // Redux
 
   //=== States ===
@@ -68,9 +58,8 @@ export default function WeatherCard() {
   //=== States ===
 
   useEffect(() => {
-
     if (locale === "en") {
-      setCity(cityName);
+      setCity(weatherData?.responseCityName || ""); // Add a conditional check
     } else {
       const arabicCity = findArabicCityName();
       setCity(arabicCity);
@@ -82,11 +71,11 @@ export default function WeatherCard() {
     moment.locale("ar-sa"); // Initialize moment with Arabic (Saudi Arabia) locale
     const initialDateAndTime = getTimeAndDate("ar-sa");
     setDateAndTime(initialDateAndTime);
-
-    if (cityName) {
+  
+    if (weatherData?.responseCityName) { // Add a conditional check
       setCity(findArabicCityName());
     }
-  }, [cityName]);
+  }, [weatherData.responseCityName]);
 
   function handleLanguageClick() {
     if (locale === "en") {
@@ -98,7 +87,7 @@ export default function WeatherCard() {
     } else {
       setLocale("en");
       i18n.changeLanguage("en");
-      setCity(cityName);
+      setCity(weatherData.responseCityName);
       const newDateAndTime = getTimeAndDate("en");
       setDateAndTime(newDateAndTime);
     }
@@ -109,7 +98,7 @@ export default function WeatherCard() {
 
   function findArabicCityName() {
     for (const city of citiesData) {
-      if (city.name_en === cityName) {
+      if (city.name_en === weatherData.responseCityName) {
         return city.name_ar;
       }
     }
@@ -188,8 +177,8 @@ export default function WeatherCard() {
                       justifyContent: "center",
                       alignItems: "center",
                     }}
-                  > 
-                  {isLoading ? <Loader/> : ""}
+                  >
+                    {isLoading ? <Loader /> : ""}
                     <Typography
                       variant="h1"
                       style={{
@@ -198,14 +187,16 @@ export default function WeatherCard() {
                         fontWeight: "400",
                       }}
                     >
-                      {currentTemperature}
+                      {weatherData.responseTemp}
                     </Typography>
 
                     {/* Todo: Temperature Image from API */}
-                    <img src={Icon} alt="" />
+                    <img src={weatherData.responseIcon} alt="" />
                   </div>
                   {/* ===Todo: Temperature Image from API ===*/}
-                  <Typography variant="h6">{t(descreption)}</Typography>
+                  <Typography variant="h6">
+                    {t(weatherData.responseDescreption)}
+                  </Typography>
 
                   {/* Min and Max Tempeture */}
                   <div
@@ -216,11 +207,11 @@ export default function WeatherCard() {
                     }}
                   >
                     <h5>
-                      {t("Min")}: {minTemperature}
+                      {t("Min")}: {weatherData.responseMinTemp}
                     </h5>
                     <h5 style={{ margin: "0px 5px" }}>|</h5>
                     <h5>
-                      {t("Max")}: {maxTemperature}
+                      {t("Max")}: {weatherData.responseMaxTemp}
                     </h5>
                   </div>
                   {/*=== Min and Max Temreture=== */}
