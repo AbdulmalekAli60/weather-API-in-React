@@ -4,8 +4,7 @@ import { useCoordinates } from "../../Contexts/CoordinatesContext";
 
 export const fetchWeatherData = createAsyncThunk(
   "weatherApi/fetchWeather",
-  async ({lat, lng}) => {
-    
+  async ({ lat, lng }) => {
     const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
 
     console.log("calling fetch weather");
@@ -19,7 +18,8 @@ export const fetchWeatherData = createAsyncThunk(
     const responseMaxTemp = Math.round(response.data.main.temp_max);
     const responseMinTemp = Math.round(response.data.main.temp_min);
     const responseDescreption = response.data.weather[0].description;
-    const responseIcon = response.data.weather[0].icon;
+    const responseIcon = `https://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`;
+
     console.log(
       "from slice",
       responseTemp,
