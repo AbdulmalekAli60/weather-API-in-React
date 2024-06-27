@@ -4,18 +4,13 @@ import { useCoordinates } from "../../Contexts/CoordinatesContext";
 
 export const fetchWeatherData = createAsyncThunk(
   "weatherApi/fetchWeather",
-  async () => {
-    const { lat, lng } = useCoordinates();
+  async ({lat, lng}) => {
+    
     const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
 
     console.log("calling fetch weather");
     const response = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${API_KEY}&units=metric`
-      // {
-      // 	cancelToken: new axios.CancelToken((c) => {
-      // 		cancelAxios = c;
-      // 	}),
-      // }
     );
 
     // handle success
@@ -25,7 +20,15 @@ export const fetchWeatherData = createAsyncThunk(
     const responseMinTemp = Math.round(response.data.main.temp_min);
     const responseDescreption = response.data.weather[0].description;
     const responseIcon = response.data.weather[0].icon;
-    console.log("from slice",responseTemp, responseCityName, responseIcon, responseDescreption,responseMaxTemp,responseMinTemp);
+    console.log(
+      "from slice",
+      responseTemp,
+      responseCityName,
+      responseIcon,
+      responseDescreption,
+      responseMaxTemp,
+      responseMinTemp
+    );
     return {
       responseTemp,
       responseCityName,
@@ -40,22 +43,8 @@ const WeatherAPiSlice = createSlice({
   name: "weatherApi",
 
   initialState: {
-    result: "empty",
-    weather: {
-      responseTemp: 0,
-      responseCityName: "",
-      responseMaxTemp: 0,
-      responseMinTemp: 0,
-      responseDescription: "",
-      responseIcon: "",
-    },
+    weather: {},
     isLoading: false,
-  },
-
-  reducers: {
-    changeResult: (state, action) => {
-      state.result = "changed";
-    },
   },
 
   extraReducers(builder) {
@@ -74,5 +63,5 @@ const WeatherAPiSlice = createSlice({
   },
 });
 
-export const { changeResult } = WeatherAPiSlice.actions;
+// export const { weatherApi } = WeatherAPiSlice.actions;
 export default WeatherAPiSlice.reducer;
